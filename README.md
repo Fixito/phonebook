@@ -2,4 +2,4 @@
 
 ## Link
 
-[Live Service URL](https://phonebook-r1if.onrender.com/)
+[Live Site URL](https://phonebook-r1if.onrender.com/)
