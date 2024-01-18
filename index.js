@@ -1,8 +1,9 @@
 import 'dotenv/config.js';
 import express from 'express';
-const app = express();
 import morgan from 'morgan';
 import Person from './models/person.js';
+
+const app = express();
 
 morgan.token('body', (req) => JSON.stringify(req.body));
 app.use(
@@ -51,7 +52,7 @@ app.get('/api/persons', (_req, res, next) => {
 });
 
 app.get('/api/persons/:id', (req, res, next) => {
-  const id = req.params.id;
+  const { id } = req.params;
   Person.findById(id)
     .then((person) => {
       if (!person) {
@@ -65,13 +66,13 @@ app.get('/api/persons/:id', (req, res, next) => {
 });
 
 app.put('/api/persons/:id', (req, res, next) => {
-  const id = req.params.id;
+  const { id } = req.params;
   const person = req.body;
 
   Person.findByIdAndUpdate(id, person, {
     new: true,
     runValidators: true,
-    context: 'query'
+    context: 'query',
   })
     .then((upDatedPerson) => {
       if (!upDatedPerson) {
@@ -85,7 +86,7 @@ app.put('/api/persons/:id', (req, res, next) => {
 });
 
 app.delete('/api/persons/:id', (req, res, next) => {
-  const id = req.params.id;
+  const { id } = req.params;
   Person.findByIdAndDelete(id)
     .then((deletedPerson) => {
       if (!deletedPerson) {
@@ -100,16 +101,18 @@ app.delete('/api/persons/:id', (req, res, next) => {
     });
 });
 
-app.use((_req, res, _next) =>
+app.use((_req, res) =>
   res.status(404).json({ msg: "Endpoint doesn't exist." })
 );
 
-app.use((error, _req, res, _next) => {
-  console.log(error);
+app.use((error, _req, res) => {
+  console.error(error);
 
   if (error.name === 'CastError') {
     return res.status(400).json({ error: 'Malformatted id' });
-  } else if (error.name === 'ValidationError') {
+  }
+
+  if (error.name === 'ValidationError') {
     return res.status(400).json({ error: error.message });
   }
 
