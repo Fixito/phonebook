@@ -1,23 +1,10 @@
 import mongoose from 'mongoose';
 
-mongoose.set('strictQuery', false);
-
-const url = process.env.MONGODB_URI;
-
-console.log('Connecting to', url);
-
-mongoose
-  .connect(url)
-  .then('Connected to MongoDb')
-  .catch((error) =>
-    console.error('Error connecting to MongoDB:', error.message)
-  );
-
 const personSchema = new mongoose.Schema({
   name: {
     type: String,
     minLength: 3,
-    required: true
+    required: true,
   },
   number: {
     type: String,
@@ -28,10 +15,10 @@ const personSchema = new mongoose.Schema({
         const isLengthValid = v.length >= 8;
         return regexMatch && isLengthValid;
       },
-      message: (props) => `${props.value} is not a valid phone number!`
+      message: (props) => `${props.value} is not a valid phone number!`,
     },
-    required: [true, 'User phone number required']
-  }
+    required: [true, 'User phone number required'],
+  },
 });
 
 personSchema.set('toJSON', {
@@ -39,7 +26,7 @@ personSchema.set('toJSON', {
     returnedObject.id = returnedObject._id.toString();
     delete returnedObject._id;
     delete returnedObject.__v;
-  }
+  },
 });
 
 export default mongoose.model('Person', personSchema);
